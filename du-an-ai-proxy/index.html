@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học liệu KHTN 7 (An toàn)</title>
+    <style>:root{--primary-color:#0056b3;--secondary-color:#ff8c00;--bg-color:#f4f7fc;--card-bg-color:#ffffff;--text-color:#333333;--light-gray-color:#e9ecef;--success-color:#28a745;--error-color:#dc3545}*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;line-height:1.6;background-color:var(--bg-color);color:var(--text-color);display:flex;flex-direction:column;align-items:center}header{background-color:var(--primary-color);color:white;padding:20px;text-align:center;width:100%}header h1{font-size:2em}main{width:100%;max-width:900px;padding:20px}.card{background-color:var(--card-bg-color);border-radius:10px;box-shadow:0 4px 8px rgba(0,0,0,0.1);padding:25px;margin-bottom:25px}h2{color:var(--primary-color);border-bottom:2px solid var(--secondary-color);padding-bottom:10px;margin-bottom:20px}h3{color:var(--primary-color);margin-top:20px;margin-bottom:10px}ul{list-style-type:'✔ ';padding-left:20px}ul li{margin-bottom:10px}img.illustration{max-width:100%;height:auto;border-radius:8px;margin:15px 0;display:block;margin-left:auto;margin-right:auto}#ai-chatbot-card{background:#e9f5ff}.chat-window{height:300px;border:1px solid #ccc;border-radius:8px;padding:10px;overflow-y:auto;background-color:white;margin-bottom:15px;display:flex;flex-direction:column}.chat-message{max-width:80%;padding:10px 15px;border-radius:15px;margin-bottom:10px;line-height:1.4}.user-message{background-color:var(--primary-color);color:white;align-self:flex-end;border-bottom-right-radius:3px}.ai-message{background-color:#f1f1f1;color:var(--text-color);align-self:flex-start;border-bottom-left-radius:3px}.chat-input-area{display:flex;gap:10px}.chat-input-area input{flex-grow:1}</style>
+</head>
+<body>
+    <header><h1>Bài học: Đo Tốc Độ</h1></header>
+    <main>
+        <section id="ai-chatbot-card" class="card">
+            <h2>🤖 Trợ lý AI - Hỏi đáp về bài học</h2>
+            <p>Có điều gì về bài học "Đo Tốc độ" mà em chưa hiểu? Hãy hỏi Trợ lý AI nhé!</p>
+            <div id="chatArea">
+                <div class="chat-window" id="chat-window">
+                    <div class="chat-message ai-message">Xin chào! Tôi có thể giúp gì cho bạn?</div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="user-input" placeholder="Nhập câu hỏi của bạn..." onkeydown="if(event.key === 'Enter') askAI()">
+                    <button onclick="askAI()">Gửi</button>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>
+        const chatWindow = document.getElementById('chat-window');
+        const userInput = document.getElementById('user-input');
+
+        async function askAI() {
+            const question = userInput.value.trim();
+            if (!question) return;
+
+            addMessageToChat(question, 'user-message');
+            userInput.value = '';
+            const waitingMessage = addMessageToChat('Trợ lý AI đang suy nghĩ...', 'ai-message');
+
+            try {
+                // ĐÂY LÀ THAY ĐỔI QUAN TRỌNG NHẤT
+                const API_URL = '/.netlify/functions/askAI';
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: question }) // Gửi câu hỏi đi
+                });
+
+                if (!response.ok) throw new Error(`Lỗi từ máy chủ trung gian.`);
+
+                const data = await response.json();
+                const aiResponse = data.answer; // Nhận câu trả lời về
+                waitingMessage.innerHTML = aiResponse.replace(/\n/g, '<br>');
+
+            } catch (error) {
+                console.error("Lỗi:", error);
+                waitingMessage.textContent = "Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.";
+            }
+        }
+
+        function addMessageToChat(text, className) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', className);
+            messageElement.innerHTML = text;
+            chatWindow.appendChild(messageElement);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            return messageElement;
+        }
+    </script>
+</body>
+</html>
