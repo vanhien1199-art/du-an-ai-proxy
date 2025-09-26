@@ -34,8 +34,7 @@ exports.handler = async function(event, context) {
     }
 
     // --- 2. GỌI API CỦA GOOGLE VÀ XỬ LÝ PHẢN HỒI ---
-
-    const GOOGLE_API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${apiKey}`;
+    const GOOGLE_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
     const prompt = `Bạn là một trợ giảng AI, chỉ trả lời các câu hỏi liên quan đến bài học "Đo tốc độ" dành cho học sinh lớp 7 một cách ngắn gọn, dễ hiểu. Nếu câu hỏi không liên quan, hãy trả lời rằng "Câu hỏi này nằm ngoài phạm vi bài học Đo tốc độ, bạn có câu hỏi nào khác không?". Câu hỏi của học sinh là: "${question}"`;
 
     try {
@@ -98,4 +97,5 @@ exports.handler = async function(event, context) {
         };
     }
 };
+
 
