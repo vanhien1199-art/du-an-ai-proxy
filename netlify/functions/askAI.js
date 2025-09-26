@@ -1,7 +1,6 @@
 exports.handler = async function (event, context) {
   const apiKey = process.env.GOOGLE_API_KEY;
 
-  // Kiểm tra API key
   if (!apiKey) {
     return {
       statusCode: 500,
@@ -9,7 +8,6 @@ exports.handler = async function (event, context) {
     };
   }
 
-  // Lấy câu hỏi từ người dùng
   let question;
   try {
     const body = JSON.parse(event.body);
@@ -28,7 +26,6 @@ exports.handler = async function (event, context) {
     };
   }
 
-  // Tạo prompt cho AI
   const prompt = `Bạn là một trợ giảng AI, chỉ trả lời các câu hỏi liên quan đến bài học "Đo tốc độ" dành cho học sinh lớp 7. Nếu câu hỏi không liên quan, hãy trả lời rằng "Câu hỏi này nằm ngoài phạm vi bài học Đo tốc độ, bạn có câu hỏi nào khác không?". Câu hỏi của học sinh là: "${question}"`;
 
   const GOOGLE_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
@@ -42,7 +39,7 @@ exports.handler = async function (event, context) {
       }),
     });
 
-    const responseText = await response.text();
+    const responseText = await response.text(); // ✅ Chỉ khai báo một lần
 
     if (!response.ok) {
       return {
@@ -62,4 +59,13 @@ exports.handler = async function (event, context) {
       statusCode: 200,
       body: JSON.stringify({ answer: aiResponse }),
     };
-  } catch
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: 'Lỗi máy chủ trung gian.',
+        details: error.message,
+      }),
+    };
+  }
+};
