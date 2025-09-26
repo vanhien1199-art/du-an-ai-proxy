@@ -41,6 +41,19 @@ exports.handler = async function (event, context) {
         contents: [{ parts: [{ text: prompt }] }],
       }),
     });
+    const resultText = await response.text();
+
+if (!response.ok) {
+  return {
+    statusCode: response.status,
+    body: JSON.stringify({
+      error: 'Lỗi từ Google AI API',
+      details: resultText
+    })
+  };
+}
+    const data = JSON.parse(resultText);
+const aiResponse = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Không có phản hồi từ AI.';
 
     const resultText = await response.text();
 
@@ -73,3 +86,4 @@ exports.handler = async function (event, context) {
     };
   }
 };
+
