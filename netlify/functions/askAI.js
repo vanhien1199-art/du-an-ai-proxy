@@ -41,34 +41,20 @@ exports.handler = async function (event, context) {
         contents: [{ parts: [{ text: prompt }] }],
       }),
     });
-    const resultText = await response.text();
 
-if (!response.ok) {
-  return {
-    statusCode: response.status,
-    body: JSON.stringify({
-      error: 'Lỗi từ Google AI API',
-      details: resultText
-    })
-  };
-}
-    const data = JSON.parse(resultText);
-const aiResponse = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Không có phản hồi từ AI.';
-
-    const resultText = await response.text();
+    const responseText = await response.text();
 
     if (!response.ok) {
       return {
         statusCode: response.status,
         body: JSON.stringify({
           error: 'Lỗi từ Google AI API',
-          details: resultText,
+          details: responseText,
         }),
       };
     }
 
-    const data = JSON.parse(resultText);
-
+    const data = JSON.parse(responseText);
     const aiResponse =
       data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Không có phản hồi từ AI.';
 
@@ -76,14 +62,4 @@ const aiResponse = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Không c
       statusCode: 200,
       body: JSON.stringify({ answer: aiResponse }),
     };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: 'Lỗi máy chủ trung gian.',
-        details: error.message,
-      }),
-    };
-  }
-};
-
+  } catch
